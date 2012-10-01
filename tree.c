@@ -81,8 +81,9 @@ extern Node *treecpy(Node *s, void *(*alloc)(size_t)) {
 		n->u[2].i = s->u[2].i;
 		break;
 	case nWord:
-		n = (*alloc)(offsetof(Node, u[2]));
+		n = (*alloc)(offsetof(Node, u[3]));
 		n->u[0].s = strcpy((char *) (*alloc)(strlen(s->u[0].s) + 1), s->u[0].s);
+		n->u[2].i = s->u[2].i;
 		if (s->u[1].s != NULL) {
 			size_t i = strlen(s->u[0].s);
 			n->u[1].s = (*alloc)(i);
