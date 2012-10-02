@@ -105,7 +105,8 @@ top:	while ((c = gchar()) == ' ' || c == '\t')
 		w = NW;
 	if (c == EOF)
 		return END;
-	if (!meta[(unsigned char) c]) {	/* it's a word or keyword. */
+	if (!nw[(unsigned char) c]) {
+		/* it's a word or keyword. note that we always use nw for the first char, $% is allowed. */
 		checkfreecaret;
 		w = RW;
 		i = 0;
