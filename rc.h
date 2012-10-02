@@ -33,7 +33,7 @@ typedef union Edata Edata;
 
 typedef enum nodetype {
 	nAndalso, nAssign, nBackq, nBang, nBody, nCbody, nNowait, nBrace,
-	nConcat, nCount, nElse, nFlat, nDup, nEpilog, nNewfn, nForin, nIf,
+	nConcat, nCount, nElse, nFlat, nDup, nEpilog, nNewfn, nForin, nIf, nNot,
 	nOrelse, nPipe, nPre, nRedir, nRmfn, nArgs, nSubshell, nCase,
 	nSwitch, nMatch, nVar, nVarsub, nWhile, nWord, nLappend, nNmpipe
 } nodetype;

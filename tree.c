@@ -24,7 +24,7 @@ extern Node *mk(int /*nodetype*/ t,...) {
 		n->u[1].s = va_arg(ap, char *);
 		n->u[2].i = va_arg(ap, int);
 		break;
-	case nBang: case nNowait:
+	case nBang: case nNot: case nNowait:
 	case nCount: case nFlat: case nRmfn: case nSubshell:
 	case nVar: case nCase:
 		n = nalloc(offsetof(Node, u[1]));
@@ -91,7 +91,7 @@ extern Node *treecpy(Node *s, void *(*alloc)(size_t)) {
 		} else
 			n->u[1].s = NULL;
 		break;
-	case nBang: case nNowait: case nCase:
+	case nBang: case nNowait: case nNot: case nCase:
 	case nCount: case nFlat: case nRmfn: case nSubshell: case nVar:
 		n = (*alloc)(offsetof(Node, u[1]));
 		n->u[0].p = treecpy(s->u[0].p, alloc);
@@ -144,7 +144,7 @@ extern void treefree(Node *s) {
 		efree(s->u[0].s);
 		efree(s->u[1].s);
 		break;
-	case nBang: case nNowait:
+	case nBang: case nNowait: case nNot:
 	case nCount: case nFlat: case nRmfn:
 	case nSubshell: case nVar: case nCase:
 		treefree(s->u[0].p);

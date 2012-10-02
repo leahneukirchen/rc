@@ -13,6 +13,10 @@
 */
 bool cond = FALSE;
 
+/* globals to support "if not". */
+bool iflast = FALSE;
+bool ifcond = TRUE;
+
 static bool haspreredir(Node *);
 static bool isallpre(Node *);
 static bool dofork(bool);
@@ -32,6 +36,8 @@ top:	sigchk();
 		set(TRUE);
 		return TRUE;
 	}
+	if (n->type != nNot)
+		iflast = FALSE;
 	switch (n->type) {
 	case nArgs: case nBackq: case nConcat: case nCount:
 	case nFlat: case nLappend: case nRedir: case nVar:
@@ -95,11 +101,23 @@ top:	sigchk();
 			true_cmd = true_cmd->u[0].p;
 		}
 		cond = TRUE;
-		if (!walk(n->u[0].p, TRUE))
+		if (walk(n->u[0].p, TRUE)) {
+			ifcond = TRUE;
+		} else {
+			ifcond = FALSE;
 			true_cmd = false_cmd; /* run the else clause */
+		}
 		cond = oldcond;
-		WALK(true_cmd, parent);
+		walk(true_cmd, parent);
+		iflast = TRUE;
+		break;
 	}
+	case nNot:
+		if (!iflast)
+			rc_error("`if not' does not follow `if(...)'");
+		if (!ifcond)
+			WALK(n->u[0].p, TRUE);
+		break;
 	case nWhile: {
 		Jbwrap j;
 		Edata jbreak;
