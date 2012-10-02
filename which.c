@@ -72,7 +72,7 @@ static bool rc_access(char *path, bool verbose) {
 
 /* return a full pathname by searching $path, and by checking the status of the file */
 
-extern char *which(char *name, bool verbose) {
+extern char *which(char *name, bool verbose, bool script) {
 	static char *test = NULL;
 	static size_t testlen = 0;
 	List *path;
@@ -99,8 +99,12 @@ extern char *which(char *name, bool verbose) {
 		}
 #endif
 	}
-	if (isabsolute(name)) /* absolute pathname? */
-		return rc_access(name, verbose) ? name : NULL;
+	if (isabsolute(name)) { /* absolute pathname? */
+		if (script)
+			return access(name, R_OK) == 0 ? name : NULL;
+		else
+			return rc_access(name, verbose) ? name : NULL;
+	}
 	len = strlen(name);
 	for (path = varlookup("path"); path != NULL; path = path->n) {
 		size_t need = strlen(path->w) + len + 2; /* one for null terminator, one for the '/' */
@@ -116,8 +120,13 @@ extern char *which(char *name, bool verbose) {
 				strcat(test, "/");
 			strcat(test, name);
 		}
-		if (rc_access(test, FALSE))
-			return test;
+		if (script) {
+			if (access(test, R_OK) == 0)
+				return test;
+		} else {
+			if (rc_access(test, FALSE))
+				return test;
+		}
 	}
 	if (verbose)
 		fprint(2, "%s not found\n", name);

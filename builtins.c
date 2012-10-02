@@ -108,7 +108,7 @@ static void b_echo(char **av) {
 	char *format = "%A\n";
 	if (*++av != NULL) {
 		if (streq(*av, "-n"))
-                	format = "%A", av++;
+			format = "%A", av++;
 		else if (streq(*av, "--"))
 			av++;
 	}
@@ -337,7 +337,7 @@ static void b_whatis(char **av) {
 		} else if (show(bee) && isbuiltin(av[i]) != NULL) {
 			f = TRUE;
 			fprint(1, "builtin %s\n", av[i]);
-		} else if (show(pee) && (e = which(av[i], FALSE)) != NULL) {
+		} else if (show(pee) && (e = which(av[i], FALSE, FALSE)) != NULL) {
 			f = TRUE;
 			fprint(1, "%S\n", e);
 		}
@@ -372,6 +372,7 @@ static void b_eval(char **av) {
 extern void b_dot(char **av) {
 	int fd;
 	bool old_i = interactive, i = FALSE;
+	char *p;
 	Estack e;
 	Edata star;
 	av++;
@@ -387,6 +388,9 @@ extern void b_dot(char **av) {
 	}
 	if (*av == NULL)
 		return;
+	p = which(*av, FALSE, TRUE);
+	if (p)
+		*av = p;
 	fd = rc_open(*av, rFrom);
 	if (fd < 0) {
 		if (rcrc) /* on rc -l, don't flag nonexistence of .rcrc */
@@ -432,7 +436,7 @@ static const struct Suffix
 	htsuf = { &mtsuf, 60*60, "h" };
 #define	SIZESUF &gbsuf
 #define	TIMESUF &htsuf
-#define	NOSUF ((struct Suffix *) NULL)  /* for RLIMIT_NOFILE on SunOS 4.1 */
+#define	NOSUF ((struct Suffix *) NULL)	/* for RLIMIT_NOFILE on SunOS 4.1 */
 
 static const struct Limit limits[] = {
 	{ "cputime",		RLIMIT_CPU,	TIMESUF },

@@ -52,7 +52,7 @@ extern void exec(List *s, bool parent) {
 	if (saw_exec)
 		rc_pid = -1;
 	if (b == NULL) {
-		path = which(*av, TRUE);
+		path = which(*av, TRUE, FALSE);
 		if (path == NULL && *av != NULL) { /* perform null commands for redirections */
 			set(FALSE);
 			redirq = NULL;
